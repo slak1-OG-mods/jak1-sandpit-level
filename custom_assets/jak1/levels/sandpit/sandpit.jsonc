@@ -1,0 +1,1465 @@
+{
+  // The "in-game" name of the level. Should be lower case, with dashes (GOAL symbol name)
+  // the name of this file, and the folder this file is in must have the same name.
+  "long_name": "sandpit",
+  // The file name, should be upper case and 8 characters or less.
+  "iso_name": "SANDPIT",
+  // The nickname, should be exactly 3 characters
+  "nickname": "snp", // 3 char name, all lowercase
+  // Background mesh file.
+  // Must have vertex colors. Use the blender cycles renderer, bake, diffuse, uncheck color,
+  // and bake to vertex colors. For now, only the first vertex color group is used, so make sure you
+  // only have 1.
+  "gltf_file": "custom_assets/jak1/levels/sandpit/sandpit.glb",
+
+  // automatically set wall vs. ground based on angle. Useful if you don't want to assign this yourself
+  "automatic_wall_detection": true,
+  "automatic_wall_angle": 45.0,
+
+  // if your mesh has triangles with incorrect orientation, set this to make all collision mesh triangles double sided
+  // this makes collision 2x slower and bigger, so only use if really needed
+  "double_sided_collide": false,
+
+  // available res-lump tag types:
+  // integer types: int32, uint32, enum-int32, enum-uint32
+  // float types: float, meters (1 meter = 4096.0 units), degrees (65536.0 = 360°)
+  // vector types: vector (normal floats), vector4m (meters), vector3m (meters with w set to 1.0), vector-vol (normal floats with w in meters), movie-pos (meters with w in degrees)
+  // special types: symbol, type, string, eco-info, cell-info, buzzer-info, water-height
+  //
+  // examples:
+  //
+  // adds a float tag 'spring-height' with value of 200 meters (1 meter = 4096.0 units):
+  // "spring-height": ["meters", 200.0]
+  //
+  // adds a degrees tag 'rotoffset':
+  // "rotoffset": ["degrees", -45.0]
+  //
+  // adds a movie-pos tag:
+  // "movie-pos": ["movie-pos", [100.22, -25.3, 99.5, 180.0]]
+  //
+  // adds an enum tag 'options':
+  // "options": ["enum-int32", "(fact-options large)"]
+  //
+  // adds a water-height tag:
+  // "water-height": ["water-height", 25.0, 0.5, 2.0, "(water-flags wt08 wt03 wt01)"]
+  //
+  // adds an eco-info tag:
+  // "eco-info": ["eco-info", "(pickup-type health)", 2]
+  //
+  // adds a cell-info tag:
+  // "eco-info": ["cell-info", "(game-task training-gimmie)"]
+  //
+  // adds a buzzer-info tag:
+  // "eco-info": ["buzzer-info", "(game-task training-buzzer)", 5]
+  //
+  // adds a 'symbol' tag (using the 'type' and 'string' lump types works the same way):
+  // "symbol-list": ["symbol", "sym-1", "sym-2"]
+
+  // The base actor id for your custom level. If you have multiple levels, this should be unique!
+  "base_id": 10000,
+
+  // All art groups you want to use in your custom level. Will add their models and corresponding textures to the FR3 file.
+  // Note: You will still have to add them to your level's .gd file.
+  // "art_groups": ["plat-ag"],
+  "art_groups": ["babak-ag", "plat-ag", "plat-eco-ag", "swamp-rock-ag.go", "lurkerworm-ag"],
+
+  // If you have any custom models in the "custom_assets/jak1/models/custom_levels" folder that you want to use in your level, add them to this list.
+  // Note: Like with art groups, these should also be added to your level's .gd file.
+  "custom_models": ["test-actor"],
+
+  // Any textures you want to include in your custom level. This is mainly useful for things such as the zoomer HUD,
+  // sky textures and cases where you want to use objects drawn with the generic renderer,
+  // which also requires you to set a texture remap table and a list of tpages.
+  // To get a list of all the textures, you can extract all of the game's textures
+  // by setting "save_texture_pngs" to true in the decompiler config.
+  // The format is ["tpage-name", "texture-name1", "texture-name2", ...].
+  // If you want all textures from a tpage, you can just do ["tpage-name"].
+  "textures": [
+    // Zoomer HUD textures
+    // ["zoomerhud"],
+    // Sandover sky textures
+    ["village1-vis-alpha"]
+  ],
+
+  // Which vanilla level's texture remap table to use.
+  // This is needed if you want to have proper textures for objects that are drawn using generic, such as
+  // dark eco pools or dying enemies. If you choose to use this,
+  // the order of art groups and tpages in your level's .gd MUST match the vanilla level's for the textures to work.
+  "tex_remap": "village1",
+
+  // Which sky to use for your custom level. This needs to be the name of a vanilla level with sky textures.
+  // Your level's mood update needs to be set up to copy the sky texture (update-mood-default already handles this as an example).
+  // You also need to add a specific tpage to your level .gd depending on the level you chose:
+  // training:   tpage-1308.go
+  // village1:   tpage-401.go
+  // beach:      tpage-215.go
+  // jungle:     tpage-388.go
+  // misty:      tpage-520.go
+  // firecanyon: tpage-1123.go
+  // village2:   tpage-921.go
+  // rolling:    tpage-925.go
+  // sunkenb:    tpage-162.go
+  // swamp:      tpage-630.go
+  // ogre:       tpage-1117.go
+  // village3:   tpage-1194.go
+  // snow:       tpage-712.go
+  // finalboss:  tpage-1418.go
+  // The tpage you choose also has to be in the alpha (4th) slot in the "tpages" list below.
+  "sky": "village1",
+
+  // Any texture pages that are added to the level's "texture-ids" array.
+  // These will be logged in and linked as part of level loading.
+  // There are five tpage categories, in this order:
+  // - tfrag
+  // - pris
+  // - shrub
+  // - alpha
+  // - water
+  // This is also (with the exception of levels that use the zoomer) the order that the tpages are listed in in the vanilla .gd files.
+  // You need to also add these to your level .gd as well.
+  // Sky textures use the alpha slot.
+  // If this is empty and "tex_remap" and "sky" are the same level, this will be auto-filled with the tpages from the
+  // corresponding level (check its .gd file for the art group/tpage order to copy over).
+  "tpages": [],
+
+  // Ambients you want to use in your custom level. Ambients can be used for various things like changing the music variation (flava),
+  // adding ambient sounds, level name hints, etc.
+  "ambients": [
+    {
+      "trans": [-21.6238, 20.0496, 17.1191, 10.0],
+      "bsphere": [-21.6238, 20.0496, 17.1191, 15.0],
+      "lump": {
+        "name": "test-ambient",
+        "type": "'hint",
+        "text-id": ["enum-uint32", "(text-id fuel-cell)"], // text id for the "POWER CELL" text
+        "play-mode": "'notice"
+      }
+    }
+  ],
+
+  "actors": [
+    {
+      "trans": [-21.6238, 20.0496, 17.1191], // translation
+      "etype": "fuel-cell", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [0, 0, 0, 1], // quaternion
+      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+      "lump": {
+        "name": "test-fuel-cell",
+        "eco-info": ["cell-info", "(game-task none)"]
+      }
+    },
+
+    {
+      "trans": [-15.2818, 15.2461, 17.136], // translation
+      "etype": "crate", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [0, 0, 0, 1], // quaternion
+      "bsphere": [-15.2818, 15.2461, 17.136, 10], // bounding sphere
+      "lump": {
+        "name": "test-crate",
+        "crate-type": "'steel",
+        "eco-info": ["eco-info", "(pickup-type money)", 10]
+      }
+    },
+
+    {
+      "trans": [-5.463, 17.4553, 1.6169], // translation
+      "etype": "eco-yellow", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [0, 0, 0, 1], // quaternion
+      "bsphere": [-5.463, 17.4553, 1.6169, 10], // bounding sphere
+      "lump": {
+        "name": "test-eco"
+      }
+    },
+    {
+      "trans": [-7.3159, 1.0468, 20.3499],
+      "etype": "babak",
+      "game_task": 0,
+      "quat" : [0, 0, 0, 1],
+      "bsphere": [-7.3159, 1.0468, 20.3499, 10],
+      "lump": {
+        "name": "test-babak",
+        "vis-dist": ["meters", 200.0],
+        "cam-notice-dist": ["meters", 30.0],
+        "idle-distance": ["meters", 50.0],
+        "cam-vert": ["meters", 8.0],
+        "cam-horz": ["meters", 20.0],
+        "path": ["vector3m", // I am pretty sure game will crash if there is no path for an enemy. So just add one. You can use "path-actor" if you want to use another actor's path.
+            [-7.3159, 1.0468, 20.3499],
+            [-2.3607, 1.0468, 12.8255],
+            [-9.7266, 1.0468, 14.4445],
+            [-7.3159, 1.0468, 20.3499]
+          ],
+        "nav-mesh-sphere": ["vector4m", // You can define spheres that will be added to the navmesh of the enemy. Enemies of the navmesh will avoid these spheres - like they avoid each other.
+          [-5.3159, 1.0468, 16.3499, 1.0]
+          ]
+      }
+    },
+    {
+      "trans": [-5.41, 3.5, 28.42], // translation
+      "etype": "test-actor", // actor type
+      "game_task": 0, // associated game task (for powercells, etc)
+      "quat": [0, 0, 0, 1], // quaternion
+      "bsphere": [-7.41, 3.5, 28.42, 10], // bounding sphere
+      "lump": {
+        "name": "test-actor"
+      }
+    },
+
+    {
+      "trans": [0.0, 50.0, 10.0],
+      "etype": "linear-plat",
+      "game_task": 0,
+      "quat": [0, 0, 0, 1],
+      "bsphere": [0.0, 50.0, 10.0, 10],
+      "lump": {
+        "name": "linear-plat-0",
+        "path": ["vector4m",
+          [0.0, 50.0, 10.0, 1.0],
+          [0.0, 50.0, 10.0, 1.0],
+          [0.0, 60.0, 10.0, 1.0],
+          [0.0, 50.0, 10.0, 1.0],
+          [0.0, 50.0, 10.0, 1.0],
+          [0.0, 60.0, 10.0, 1.0],
+          [0.0, 50.0, 10.0, 1.0]
+          ],
+        "timings": ["float",
+          0.0, // offset before starting
+          2.0, // down to up (out)
+          2.0, // up to down (out)
+          6.0, // stay down
+          2.0, // down to up (back)
+          2.0, // up to down (back)
+          0.0 // immediately start back up
+          ],
+        "sync": ["float", 14, 0.0]
+      }
+    },
+
+    {
+      "trans": [0.0, 50.0, 17.0],
+      "etype": "linear-plat",
+      "game_task": 0,
+      "quat": [0, 0, 0, 1],
+      "bsphere": [0.0, 50.0, 17.0, 10],
+      "lump": {
+        "name": "linear-plat-1",
+        "path": ["vector4m",
+          [0.0, 50.0, 17.0, 1.0],
+          [0.0, 50.0, 17.0, 1.0],
+          [0.0, 60.0, 17.0, 1.0],
+          [0.0, 50.0, 17.0, 1.0],
+          [0.0, 50.0, 17.0, 1.0],
+          [0.0, 60.0, 17.0, 1.0],
+          [0.0, 50.0, 17.0, 1.0]
+        ],
+        "timings": ["float",
+          1.0, // offset before starting
+          2.0, // down to up (out)
+          2.0, // up to down (out)
+          4.0, // stay down
+          2.0, // down to up (back)
+          2.0, // up to down (back)
+          1.0 // immediately start back up
+          ],
+        "sync": ["float", 14, 0.0]
+      }
+    },
+
+    {
+      "trans": [0.0, 50.0, 24.0],
+      "etype": "linear-plat",
+      "game_task": 0,
+      "quat": [0, 0, 0, 1],
+      "bsphere": [0.0, 50.0, 24.0, 10],
+      "lump": {
+        "name": "linear-plat-2",
+        "path": ["vector4m",
+          [0.0, 50.0, 24.0, 1.0],
+          [0.0, 50.0, 24.0, 1.0],
+          [0.0, 60.0, 24.0, 1.0],
+          [0.0, 50.0, 24.0, 1.0],
+          [0.0, 50.0, 24.0, 1.0],
+          [0.0, 60.0, 24.0, 1.0],
+          [0.0, 50.0, 24.0, 1.0]
+          ],
+        "timings": ["float",
+          2.0, // offset before starting
+          2.0, // down to up (out)
+          2.0, // up to down (out)
+          2.0, // stay down
+          2.0, // down to up (back)
+          2.0, // up to down (back)
+          2.0 // immediately start back up
+          ],
+        "sync": ["float", 14, 0.0]
+      }
+    },
+
+    {
+      "trans": [0.0, 50.0, 31.0],
+      "etype": "linear-plat",
+      "game_task": 0,
+      "quat": [0, 0, 0, 1],
+      "bsphere": [0.0, 50.0, 31.0, 10],
+      "lump": {
+        "name": "linear-plat-3",
+        "path": ["vector4m",
+          [0.0, 50.0, 31.0, 1.0],
+          [0.0, 50.0, 31.0, 1.0],
+          [0.0, 60.0, 31.0, 1.0],
+          [0.0, 50.0, 31.0, 1.0],
+          [0.0, 50.0, 31.0, 1.0],
+          [0.0, 60.0, 31.0, 1.0],
+          [0.0, 50.0, 31.0, 1.0]
+        ],
+        "timings": ["float",
+          3.0, // offset before starting
+          2.0, // down to up (out)
+          2.0, // up to down (out)
+          0.0, // stay down
+          2.0, // down to up (back)
+          2.0, // up to down (back)
+          0.0 // immediately start back up
+          ],
+        "sync": ["float", 14, 0.0]
+      }
+    },
+    //SANDPIT MOD ACTORS/ENTITIES START HERE
+       //SWINGPOLES - EXT//
+       {
+        "trans": [-705.615, 49.0861, 241.35], // translation
+        "etype": "swingpole",  // actor type
+        "game_task": 0, // associated game task (for powercells, etc)
+        "quat": [0.495393, -0.495728, 0.505011, 0.503567], // quaternion
+        "bsphere": [-705.615, 49.0861, 241.35, 10], // bounding sphere
+        "lump": {
+          "name": "test-swingpole",
+          "scale": [ "float", 1.0, 1.0, 1.0, 1.0 ]
+        }
+      },
+
+      {
+        "trans": [-705.615, 49.0861, 252.138], // translation
+        "etype": "swingpole",  // actor type
+        "game_task": 0, // associated game task (for powercells, etc)
+        "quat": [0.495393, -0.495728, 0.505011, 0.503567], // quaternion
+        "bsphere": [-705.615, 49.0861, 252.138, 10], // bounding sphere
+        "lump": {
+          "name": "test-swingpole-1",
+          "scale": [ "float", 1.0, 1.0, 1.0, 1.0 ]
+        }
+      },
+      //CAVE SWINGPOLE
+      {
+        "trans": [-872.521, 42.9257, 167.503], // translation
+        "etype": "swingpole",  // actor type
+        "game_task": 0, // associated game task (for powercells, etc)
+        "quat": [0.268991, -0.648763, 0.654289, 0.280057], // quaternion
+        "bsphere": [-872.521, 42.9257, 167.503, 10], // bounding sphere
+        "lump": {
+          "name": "test-swingpole-2",
+          "scale": [ "float", 1.0, 1.0, 1.0, 1.0 ]
+        }
+      },
+        //CAVEROCK ACTOR NOT WORKING - FIX THIS
+      {
+        "aid": 14538,
+        "trans": [-893.985, 36.4137, 217.445], // translation
+        "etype": "swamp-rock",  // actor type
+        "game_task": 0, // associated game task (for powercells, etc)
+        "quat": [0, 0, 0, 1], // quaternion
+        "bsphere": [-893.985, 36.4137, 217.445, 10], // bounding sphere
+        "lump": {
+          "name": "swamp-rock-1",
+          "scale": [ "float", 1.0, 1.0, 1.0, 1.0 ],
+          "scale-factor": 1.5
+        }
+      },
+
+      //STEEL CRATES//
+
+      {
+        "trans": [-623.754, 4.35202, 271.507], // translation
+        "etype": "crate", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [0, 0, 0, 1], // quaternion
+        "bsphere": [-623.754, 4.35202, 271.507, 10], // bounding sphere
+        "lump": {
+          "name": "snp-crate-steel",
+          "crate-type": "'steel",
+          "eco-info": ["int32", 5, 6]
+        }
+      },
+
+      {
+        "trans": [-879.356, 23.9919, 185.725], // translation
+        "etype": "crate", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [0, 0, 0, 1], // quaternion
+        "bsphere": [-879.356, 23.9919, 185.725, 10], // bounding sphere
+        "lump": {
+          "name": "snp-crate-steel-2",
+          "crate-type": "'steel",
+          "eco-info": ["int32", 5, 6]
+        }
+      },
+          //ECOVENT
+      {
+        "trans": [-869.054, 35.0391, 218.646], // translation
+        "etype": "ecovent", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [0, 0, 0, 1], // quaternion
+        "bsphere": [-869.054, 35.0391, 218.646, 10], // bounding sphere
+        "lump": {
+          "name": "snp-ecovent-yellow",
+          "eco-info": ["int32", 1, 1]
+        }
+      },
+        //WOOD CRATE YELLOW ECO
+      {
+        "trans": [-674.195, 32.1707, 325.05], // translation
+        "etype": "crate", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [0, 0, 0, 1], // quaternion
+        "bsphere": [-674.195, 32.1707, 325.05, 10], // bounding sphere
+        "lump": {
+          "name": "snp-crate-wood",
+          "crate-type": "'wood",
+          "eco-info": ["int32", 1, 1]
+        }
+      },
+
+      //SANDCAVE BLUE ECO
+      {
+        "trans": [-957.869, 7.87049, 112.379], // translation
+        "etype": "eco-blue", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [0, 0, 0, 1], // quaternion
+        "bsphere": [-957.869, 7.87049, 112.379, 10], // bounding sphere
+        "lump": {
+          "name": "snp-blue-eco-1"
+        }
+      },
+
+      //CRATES - SCOUTFLIES
+      {
+        "trans": [-592.846, 27.7899, 235.093], // translation
+        "etype": "crate", // actor type
+        "game_task": "(game-task sandpit-buzzer)", // associated game task (for powercells, etc)
+        "quat": [0, 0, 0, 1], // quaternion
+        "bsphere": [-592.846, 27.7899, 235.09, 10], // bounding sphere
+        "lump": {
+          "name": "snp-fly1",
+          "crate-type": "'iron",
+          "eco-info": ["buzzer-info", "(game-task sandpit-buzzer)", 0],
+          "movie-pos": ["movie-pos", [-592.846, 27.7899, 235.093, -10.0]]
+        }
+      },
+
+      {
+        "trans": [-563.324, 9.42072, 272.187], // translation
+        "etype": "crate", // actor type
+        "game_task": "(game-task sandpit-buzzer)", // associated game task (for powercells, etc)
+        "quat": [0, 0, 0, 1], // quaternion
+        "bsphere": [-563.324, 9.42072, 272.187, 10], // bounding sphere
+        "lump": {
+          "name": "snp-fly2",
+          "crate-type": "'iron",
+          "eco-info": ["buzzer-info", "(game-task sandpit-buzzer)", 1],
+          "movie-pos": ["movie-pos", [-563.324, 8.93172, 269.673, -10.0]]
+        }
+      },
+
+      {
+        "trans": [-650.644, 14.456, 268.485], // translation
+        "etype": "crate", // actor type
+        "game_task": "(game-task sandpit-buzzer)", // associated game task (for powercells, etc)
+        "quat": [0, 0, 0, 1], // quaternion
+        "bsphere": [-650.644, 14.456, 268.485, 10], // bounding sphere
+        "lump": {
+          "name": "snp-fly3",
+          "crate-type": "'iron",
+          "eco-info": ["buzzer-info", "(game-task sandpit-buzzer)", 2],
+          "movie-pos": ["movie-pos", [-650.644, 14.456, -266.485, -10.0]]
+        }
+      },
+      {
+        "trans": [-698.214, 16.3376, 306.531], // translation
+        "etype": "crate", // actor type
+        "game_task": "(game-task sandpit-buzzer)", // associated game task (for powercells, etc)
+        "quat": [0, 0, 0, 1], // quaternion
+        "bsphere": [-698.214, 16.3376, 306.531, 10], // bounding sphere
+        "lump": {
+          "name": "snp-fly4",
+          "crate-type": "'iron",
+          "eco-info": ["buzzer-info", "(game-task sandpit-buzzer)", 3],
+          "movie-pos": ["movie-pos", [-698.214, 14.456, -266.485, -10.0]]
+        }
+      },
+      {
+        "trans": [-722.231, 65.945, 359.993], // translation
+        "etype": "crate", // actor type
+        "game_task": "(game-task sandpit-buzzer)", // associated game task (for powercells, etc)
+        "quat": [0, 0, 0, 1], // quaternion
+        "bsphere": [-722.231, 65.945, 359.993, 10], // bounding sphere
+        "lump": {
+          "name": "snp-fly5",
+          "crate-type": "'iron",
+          "eco-info": ["buzzer-info", "(game-task sandpit-buzzer)", 4],
+          "movie-pos": ["movie-pos", [-722.231, 65.945, 359.993, -10.0]]
+        }
+      },
+
+      {
+        "trans": [-883.134, 35.0837, 135.965], // translation
+        "etype": "crate", // actor type
+        "game_task": "(game-task sandpit-buzzer)", // associated game task (for powercells, etc)
+        "quat": [0, 0, 0, 1], // quaternion
+        "bsphere": [-883.134, 35.0837, 135.965, 10], // bounding sphere
+        "lump": {
+          "name": "snp-fly6",
+          "crate-type": "'iron",
+          "eco-info": ["buzzer-info", "(game-task sandpit-buzzer)", 5],
+          "movie-pos": ["movie-pos", [-883.134, 35.0837, 121.965, -10.0]]
+        }
+      },
+
+      {
+        "trans": [-836.449, 52.873, 220.368], // translation
+        "etype": "crate", // actor type
+        "game_task": "(game-task sandpit-buzzer)", // associated game task (for powercells, etc)
+        "quat": [0, 0, 0, 1], // quaternion
+        "bsphere": [-836.449, 52.873, 220.368, 10], // bounding sphere
+        "lump": {
+          "name": "snp-fly7",
+          "crate-type": "'iron",
+          //"eco-info": [ "int32", 8, 11 ],
+          "eco-info": ["buzzer-info", "(game-task sandpit-buzzer)", 6],
+          "movie-pos": ["movie-pos", [-836.449, 52.873, 220.368, -10.0]]
+        }
+      },
+
+        //POWER CELL//
+      {
+        "trans": [-832.411, 45.0144, 44.9555], // translation
+        "etype": "fuel-cell", // actor type
+        "game_task": "(game-task sandpit-robocell)", // associated game task (for powercells, etc)
+        "quat": [0, 0, 0, 1], // quaternion
+        "bsphere": [-832.411, 45.0144, 44.9555, 10], // bounding sphere
+        "lump": {
+          "name": "snp-fuel-cell-01",
+          "eco-info": [ "int32", 6, 117 ]
+        }
+      },
+
+      {
+        "trans": [-923.714, 35.138, 119.652], // translation
+        "etype": "fuel-cell", // actor type
+        "game_task": "(game-task sandpit-idolcell)", // associated game task (for powercells, etc)
+        "quat": [0, 0, 0, 1], // quaternion
+        "bsphere": [-923.714, 35.138, 119.652, 10], // bounding sphere
+        "lump": {
+          "name": "snp-fuel-cell-02",
+          "eco-info": [ "int32", 6, 118 ]
+        }
+      },
+
+      {
+        "trans": [-891.474, 60.1755, 362.062], // translation
+        "etype": "fuel-cell", // actor type
+        "game_task": "(game-task sandpit-cavecell)", // associated game task (for powercells, etc)
+        "quat": [0, 0, 0, 1], // quaternion
+        "bsphere": [-891.474, 60.1755, 362.062, 10], // bounding sphere
+        "lump": {
+          "name": "snp-fuel-cell-03",
+          "eco-info": [ "int32", 6, 116 ]
+        }
+      },
+
+      //PRECURSOR PLATS - ROBOT
+      {
+        "trans": [-815.159, 31.2782, 114.099], // translation
+        "etype": "plat",  // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [0, 0, 0, 1], // quaternion
+        "bsphere": [-815.159, 31.2782, 114.099, 10], // bounding sphere
+        "lump": {
+          "name": "snp-cave-plat-1",
+          "path": [
+           "vector4m",
+           [ -815.159, 31.2782, 114.099, 1.0 ], // fourth value seems to have no effect
+           [ -815.159, 31.2782, 104.099, 1.0 ],
+           [ -815.159, 31.2782, 94.099, 1.0 ]
+         ],
+         "sync": ["float", 7.0, 5.0] // platform faster or slower. higher is slower. Plat-ecos move without this, but regular plats seem to need it.
+        }
+      },
+
+      {
+        "trans": [-820.159, 31.2782, 94.099], // translation
+        "etype": "plat",  // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [0, 0, 0, 1], // quaternion
+        "bsphere": [-820.159, 31.2782, 94.099, 10], // bounding sphere
+        "lump": {
+          "name": "snp-cave-plat-2",
+          "path": [
+           "vector4m",
+           [ -820.159, 31.2782, 94.099, 1.0 ], // fourth value seems to have no effect
+           [ -828.159, 31.2782, 94.099, 1.0 ],
+           [ -837.159, 31.2782, 94.099, 1.0 ]
+         ],
+         "sync": ["float", 7.0, 5.0] // platform faster or slower. higher is slower. Plat-ecos move without this, but regular plats seem to need it.
+        }
+      },
+      //SANDCAVE PLAT
+      {
+        "trans": [-966.528, 8.2782, 95.099], // translation
+        "etype": "plat-eco",  // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [0, 0, 0, 1], // quaternion
+        "bsphere": [-966.528, 8.2782, 95.099, 10], // bounding sphere
+        "lump": {
+          "name": "snp-cave-plat-3",
+          "notice-dist":["meters", 2.5],
+          "path": [
+           "vector4m",
+           [ -966.528, 8.2782, 95.099, 1.0 ], // fourth value seems to have no effect
+           [ -966.528, 17.2782, 95.099, 1.0 ],
+           [ -966.528, 25.2782, 95.099, 1.0 ]
+         ],
+         "sync": ["float", 7.0, 0.0] // platform faster or slower. higher is slower. Plat-ecos move without this, but regular plats seem to need it.
+        }
+      },
+
+      {
+        "trans": [-814.162, 31.8177, 248.437], // translation
+        "etype": "plat-eco",  // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [0, 0, 0, 1], // quaternion
+        "bsphere": [-807.346, 31.8177, 248.179, 10], // bounding sphere
+        "lump": {
+          "name": "snp-eco-plat",
+          "notice-dist":["meters", 2.5],
+          "path": [
+           "vector4m",
+           [ -814.162, 31.8177, 248.437, 1.0 ], // fourth value seems to have no effect
+           [ -821.497, 40.023, 237.833, 1.0 ],
+           [ -822.483, 50.0122, 227.692, 1.0 ]
+         ],
+         "sync": ["float", 7.0, 0.0] // platform faster or slower. higher is slower. Plat-ecos move without this, but regular plats seem to need it.
+        }
+      },
+
+      //MUNEH!! //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      {
+        "trans": [ -634.397, 20.8205, 220.314 ], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [  -634.397, 20.8205, 220.314, 10 ], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-01"
+        }
+      },
+
+      {
+        "trans": [-639.173, 20.2768, 221.964], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-639.173, 20.2768, 221.964, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-02"
+        }
+      },
+
+      {
+        "trans": [-642.896, 19.8629, 225.091], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-642.896, 19.8629, 225.091, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-03"
+        }
+      },
+
+      {
+        "trans": [-647.223, 19.2684, 229.427], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-647.223, 19.2684, 229.427, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-04"
+        }
+      },
+
+      
+      {
+        "trans": [-645.367, 6.75272, 261.636], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-645.367, 6.75272, 261.636, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-05"
+        }
+      },
+
+      
+      {
+        "trans": [-648.117, 8.92892, 263.352], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-648.117, 8.92892, 263.352, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-06"
+        }
+      },
+
+      {
+        "trans": [-720.03, 27.5042, 227.766], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-720.03, 27.5042, 227.766, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-07"
+        }
+      },
+
+      {
+        "trans": [-725.281, 27.5042, 226.349], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-725.281, 27.5042, 226.349, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-08"
+        }
+      },
+
+      {
+        "trans": [-744.54, 31.0261, 203.108], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-744.54, 31.0261, 203.108, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-09"
+        }
+      },
+
+      {
+        "trans": [-744.54, 29.4852, 195.762], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-744.54, 29.4852, 195.762, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-10"
+        }
+      },
+
+      {
+        "trans": [-744.151, 27.9013, 188.102], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-744.151, 27.9013, 188.102, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-11"
+        }
+      },
+
+      {
+        "trans": [-742.983, 26.4428, 179.416], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-742.983, 26.4428, 179.416, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-12"
+        }
+      },
+
+      {
+        "trans": [-742.689, 24.725, 172.132], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-742.689, 24.725, 172.132, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-13"
+        }
+      },
+
+      {
+        "trans": [-694.707, 40.5511, 220.247], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-694.707, 40.5511, 220.247, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-14"
+        }
+      },
+
+      {
+        "trans": [-704.53, 40.5155, 220.247], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-704.53, 40.5155, 220.247, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-15"
+        }
+      },
+
+      {
+        "trans": [-704.53, 41.3282, 224.363], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-704.53, 41.3282, 224.363, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-16"
+        }
+      },
+
+      {
+        "trans": [-704.53, 43.2656, 228.783], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-704.53, 43.2656, 228.783, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-17"
+        }
+      },
+
+      {
+        "trans": [-704.53, 43.2656, 233.639], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-704.53, 43.2656, 233.639, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-18"
+        }
+      },
+
+      {
+        "trans": [-721.641, 36.6418, 325.757], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-721.641, 36.6418, 325.757, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-19"
+        }
+      },
+
+      {
+        "trans": [-712.745, 35.5281, 325.757], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-712.745, 35.5281, 325.757, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-20"
+        }
+      },
+
+      {
+        "trans": [-642.217, 27.9298, 320.202], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-642.217, 27.9298, 320.20, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-21"
+        }
+      },
+
+      {
+        "trans": [-637.063, 23.8073, 317.408], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-637.063, 23.8073, 317.408, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-22"
+        }
+      },
+
+      {
+        "trans": [-644.539, 19.8126, 304.112], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-644.539, 19.8126, 304.112, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-23"
+        }
+      },
+
+      {
+        "trans": [-651.02, 19.8126, 300.266], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-651.02, 19.8126, 300.266, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-24"
+        }
+      },
+
+      {
+        "trans": [-657.175, 19.6733, 296.892], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-657.175, 19.6733, 296.892, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-25"
+        }
+      },
+
+      {
+        "trans": [-663.528, 19.2456, 293.444], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-663.528, 19.2456, 293.444, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-26"
+        }
+      },
+
+      {
+        "trans": [-771.874, 49.7344, 316.831], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-771.874, 49.7344, 316.831, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-27"
+        }
+      },
+
+      {
+        "trans": [-768.129, 50.6568, 320.227], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-768.129, 50.6568, 320.227, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-28"
+        }
+      },
+
+      {
+        "trans": [-764.667, 51.0691, 324.354], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-764.667, 51.0691, 324.354, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-29"
+        }
+      },
+
+      {
+        "trans": [-761.139, 51.0681, 329.352], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-761.139, 51.0681, 329.352, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-30"
+        }
+      },
+
+      {
+        "trans": [-718.467, 57.5244, 337.641], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-718.467, 57.5244, 337.641, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-31"
+        }
+      },
+
+      {
+        "trans": [-714.467, 57.5244, 339.641], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-714.467, 57.5244, 339.641, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-32"
+        }
+      },
+
+      {
+        "trans": [-712.467, 57.5244, 344.035], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-712.467, 57.5244, 344.035, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-33"
+        }
+      },
+
+      {
+        "trans": [-707.83, 68.7285, 354.953], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-707.83, 68.7285, 354.953, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-34"
+        }
+      },
+
+      {
+        "trans": [-704.501, 68.7285, 354.953], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-704.501, 68.7285, 354.953, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-35"
+        }
+      },
+
+      {
+        "trans": [-705.107, 68.7285, 351.752], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-705.107, 68.7285, 351.752, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-36"
+        }
+      },
+
+      {
+        "trans": [-857.848, 55.4313, 363.406], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-857.848, 55.4313, 363.406, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-37"
+        }
+      },
+
+      {
+        "trans": [-845.546, 31.079, 87.899], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-845.546, 31.079, 87.899, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-38"
+        }
+      },
+
+      {
+        "trans": [-861.568, 56.4313, 363.406], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-861.568, 56.4313, 363.406, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-39"
+        }
+      },
+
+      {
+        "trans": [-845.921, 31.079, 83.7732], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-845.921, 31.079, 83.7732, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-40"
+        }
+      },
+
+      {
+        "trans": [-865.327, 56.4313, 362.285], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-865.327, 56.4313, 362.285, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-41"
+        }
+      },
+
+      {
+        "trans": [-844.036, 28.9926, 65.1474], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-844.036, 28.9926, 65.1474, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-42"
+        }
+      },
+
+      {
+        "trans": [-869.517, 56.4313, 361.273], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-869.517, 56.4313, 361.273, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-43"
+        }
+      },
+
+      {
+        "trans": [-842.751, 28.9926, 61.1771], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-842.751, 28.9926, 61.1771, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-44"
+        }
+      },
+
+      {
+        "trans": [-691.572, 6.98313, 260.025 ], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-691.572, 6.98313, 260.025, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-45"
+        }
+      },
+
+      {
+        "trans": [-699.613, 6.98313, 258.861], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-699.613, 6.98313, 258.861, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-46"
+        }
+      },
+
+      {
+        "trans": [-707.795, 6.98313, 258.861], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-707.795, 6.98313, 258.861, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-47"
+        }
+      },
+
+      {
+        "trans": [-717.496, 6.98313, 258.805], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-717.496, 6.98313, 258.805, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-48"
+        }
+      },
+
+      {
+        "trans": [-739.399, 10.9831, 281.666], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-739.399, 10.9831, 281.666, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-49"
+        }
+      },
+
+      {
+        "trans": [-739.399, 12.2562, 287.119], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-739.399, 12.2562, 287.119, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-50"
+        }
+      },
+
+      {
+        "trans": [-739.399, 13.9554, 292.962], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-739.399, 13.9554, 292.962, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-51"
+        }
+      },
+
+      {
+        "trans": [-739.399, 16.4071, 298.537], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-739.399, 16.4071, 298.537, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-52"
+        }
+      },
+
+      {
+        "trans": [-770.183, 8.42121, 258.805], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-770.183, 8.42121, 258.805, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-53"
+        }
+      },
+
+      {
+        "trans": [-778.541, 8.42121, 258.805], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-778.541, 8.42121, 258.805, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-54"
+        }
+      },
+
+      {
+        "trans": [-804.663, 28.5906, 164.506], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-804.663, 28.5906, 164.506, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-55"
+        }
+      },
+
+      {
+        "trans": [-809.022, 28.5906, 167.759], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-809.022, 28.5906, 167.759, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-56"
+        }
+      },
+
+      {
+        "trans": [-905.863, 21.3702, 131.858], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-905.863, 21.3702, 131.858, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-57"
+        }
+      },
+
+      {
+        "trans": [-911.747, 21.3702, 135.29], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-911.747, 21.3702, 135.29, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-58"
+        }
+      },
+
+      {
+        "trans": [-916.328, 21.3702, 131.858], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-916.328, 21.3702, 131.858, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-59"
+        }
+      },
+
+      {
+        "trans": [-897.076, 10.5766, 78.6617], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-897.076, 10.5766, 78.6617, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-60"
+        }
+      },
+
+      {
+        "trans": [-895.724, 10.5766, 75.9336], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-895.724, 10.5766, 75.9336, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-61"
+        }
+      },
+
+      {
+        "trans": [-897.076, 10.5766, 73.1666], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-897.076, 10.5766, 73.1666, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-62"
+        }
+      },
+
+      {
+        "trans": [-935.241, 10.5766, 74.9294], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-935.241, 10.5766, 74.9294, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-63"
+        }
+      },
+
+      {
+        "trans": [-939.183, 10.5766, 74.9294], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-939.183, 10.5766, 74.9294, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-64"
+        }
+      },
+
+      {
+        "trans": [-943.058, 10.5766, 74.9294], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-943.058, 10.5766, 74.9294, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-65"
+        }
+      },
+
+      {
+        "trans": [-802.416, 11.259, 241.67], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-802.416, 11.259, 241.67, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-66"
+        }
+      },
+
+      {
+        "trans": [-811.966, 11.5629, 237.75], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-811.966, 11.5629, 237.75, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-67"
+        }
+      },
+
+      {
+        "trans": [-822.593, 11.5629, 239.5], // translation
+        "etype": "money", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-822.593, 11.5629, 239.5, 10], // bounding sphere
+        "lump": {
+          "name": "sandpit-money-68"
+        }
+      },
+
+        // ORB CACHE ////////////////////////////////////////////////////////////////////////////////////////
+      {
+        "trans": [-922.658, 35.6224, 233.224], // translation
+        "etype": "orb-cache-top", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-922.658, 35.6224, 233.224, 10], // bounding sphere
+        "lump": {
+          "name": "snp-orb-cache-top-1",
+          "orb-cache-count": 15
+        }
+      },
+
+      {
+        "trans": [-858.098, 29.9073, 274.205], // translation
+        "etype": "eco-blue", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [0, 0, 0, 1], // quaternion
+        "bsphere": [-858.098, 29.9073, 274.205, 10], // bounding sphere
+        "lump": {
+          "name": "snp-blue-eco-2"
+        }
+      },
+
+        //ENEMIES TEST
+      {
+        "aid": 50100,
+      "trans": [ -653.961, 3.5735, 278.778 ], // translation
+      "etype": "babak", // actor type
+      "game_task": "(game-task none)", // associated game task (for powercells, etc)
+      "quat": [ 0, 0, 0, 1 ], // quaternion
+      "bsphere": [ -653.961, 3.5735, 278.778, 10 ], // bounding sphere
+      "lump": {
+        "name": "snp-babak-1",
+        "path": [
+          "vector4m",
+          [-653.961, 3.5735, 278.778, 1.0],  //1400.28, 61.45, 122.17, 1.0 original
+          [-644.961, 3.5735, 282.778, 1.0],
+          [-648.961, 3.5735, 285.778, 1.0],
+          [-653.961, 3.5735, 278.778, 1.0]
+        ],
+        "nav-mesh-actor": [ "uint32", 50100 ]
+        }
+      },
+
+      {
+        "trans": [-696.772, 19.6142, 269.527], // translation
+        "etype": "lurkerworm", // actor type
+        "game_task": "(game-task none)", // associated game task (for powercells, etc)
+        "quat": [ 0, 0, 0, 1 ], // quaternion
+        "bsphere": [-696.772, 19.6142, 269.527, 10 ], // bounding sphere
+        "lump": {
+          "name": "snp-lurkerworm-1"
+        }
+      }
+
+    ]
+}

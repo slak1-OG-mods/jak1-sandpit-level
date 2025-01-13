@@ -790,6 +790,11 @@
   (input-opts-binds-unknown #x1615)
   (progress-no-other-resolution-options #x1616)
   (input-opts-controller-led-reflect-heat #x1617)
+  (sandpit-level-name #x1618)
+  (sandpit-cavecell #x1619)
+  (sandpit-robocell #x1620)
+  (sandpit-idolcell #x1621)
+  (sandpit-buzzer #x1622)
   ;; mod text mod-base-change
   (pad-triangle #x2000)
   (pad-circle #x2001)

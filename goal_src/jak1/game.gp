@@ -1659,6 +1659,13 @@
 ;; the DGO file
 (custom-level-cgo "TSZ.DGO" "test-zone/testzone.gd")
 
+;; sandpit level
+
+;; it should point to the .jsonc file that specifies the level.
+(build-custom-level "sandpit")
+;; the DGO file
+(custom-level-cgo "SNP.DGO" "sandpit/sandpit.gd")
+
 ;; generate the art group for a custom actor.
 ;; requires a .glb model file in custom_assets/jak1/models/custom_levels
 ;; to also generate a collide-mesh, add :gen-mesh #t

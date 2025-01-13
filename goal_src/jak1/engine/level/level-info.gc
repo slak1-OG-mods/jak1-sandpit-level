@@ -2525,4 +2525,61 @@
        '()
        :wait-for-load #t))
 
+       (define sandpit
+  (new 'static
+       'level-load-info
+       :index 27
+       :name 'sandpit
+       :visname 'sandpit-vis
+       ;; name + -vis
+       :nickname 'snp
+       ;; nickname
+       :packages
+       '()
+       :sound-banks
+       '()
+       :music-bank #f
+       :ambient-sounds
+       '()
+       :mood '*village1-mood*
+       :mood-func 'update-mood-village1
+       :ocean '*ocean-map-village1*
+       :sky #t
+       :sun-fade 1.0
+       :continues
+       '((new 'static
+             'continue-point
+             :name "sandpit-start"
+             :level 'sandpit
+             :trans
+             (new 'static 'vector :x (meters -604.693) :y (meters 33.0277) :z (meters 265.268) :w 1.0)
+             :quat
+             (new 'static 'quaternion :w 1.0)
+             :camera-trans
+             (new 'static 'vector :x 0.0 :y 4096.0 :z 0.0 :w 1.0)
+             :camera-rot
+             (new 'static 'array float 9 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0)
+             :load-commands
+             '()
+             :vis-nick 'none
+             :lev0 'sandpit
+             :disp0 'display
+             :lev1 #f
+             :disp1 #f))
+       :tasks
+       '()
+       :priority 100
+       :load-commands
+       '()
+       :alt-load-commands
+       '()
+       :bsp-mask #xffffffffffffffff
+       :bsphere
+       (new 'static 'sphere :w 167772160000.0)
+       :bottom-height (meters -20)
+       :run-packages
+       '()
+       :wait-for-load #t))
+
 (cons! *level-load-list* 'test-zone)
+(cons! *level-load-list* 'sandpit)      ;; Adds my level and continue-points to the list in debug menu

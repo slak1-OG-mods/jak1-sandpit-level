@@ -876,7 +876,11 @@
   (plunger-lurker-hit 113)
   (leaving-misty 114)
   (assistant-village3 115)
-  (max 116)
+  (sandpit-cavecell 116)
+  (sandpit-robocell 117)
+  (sandpit-idolcell 118)
+  (sandpit-buzzer 119)
+  (max 120)
   )
 
 (defenum text-id
