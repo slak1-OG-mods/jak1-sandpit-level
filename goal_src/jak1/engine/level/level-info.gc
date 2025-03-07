@@ -2535,15 +2535,15 @@
        :nickname 'snp
        ;; nickname
        :packages
-       '()
+       '(beach)
        :sound-banks
-       '()
-       :music-bank #f
+       '(beach)
+       :music-bank 'beach
        :ambient-sounds
        '()
        :mood '*village1-mood*
        :mood-func 'update-mood-village1
-       :ocean '*ocean-map-village1*
+       :ocean #f
        :sky #t
        :sun-fade 1.0
        :continues
