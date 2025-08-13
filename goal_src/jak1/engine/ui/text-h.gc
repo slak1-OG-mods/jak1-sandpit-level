@@ -800,6 +800,7 @@
   (sandpit-robocell #x1622)
   (sandpit-idolcell #x1623)
   (sandpit-buzzer #x1624)
+  (sandpit-new-game #x1700)
   ;; mod text mod-base-change
   (pad-triangle #x2000)
   (pad-circle #x2001)

@@ -5,7 +5,7 @@
 (require "pc/pckernel-common.gc")
 (require "pc/features/autosplit-h.gc")
 (define *speedrun-info*
-  (new 'static 'speedrun-info-jak1 :should-display? #t :needs-post-blackout-setup? #f :has-started? #f))
+  (new 'static 'speedrun-info-jak1 :should-display? #t :needs-post-blackout-setup? #f :has-started? #f :category (speedrun-category sandpit-game)))
 
 (define-extern *mod-version-text* string)
 
@@ -199,6 +199,9 @@
   ;; start new game with specified category, if any (otherwise we're resetting current category)
   (if category (set! (-> *speedrun-info* category) category))
   (case (-> *speedrun-info* category)
+    (((speedrun-category sandpit-game))
+     ;; spawn at the sandpit warp gate checkpoint
+     (initialize! *game-info* 'game (the-as game-save #f) "sandpit-warp"))
     (((speedrun-category full-game))
      ;; spawn at the geyser warp gate checkpoint
      (initialize! *game-info* 'game (the-as game-save #f) "game-start"))
@@ -281,6 +284,9 @@
              (>= (-> *display* base-frame-counter) (-> *game-info* blackout-time)))
     (set! (-> *speedrun-info* needs-post-blackout-setup?) #f)
     (case (-> *speedrun-info* category)
+      (((speedrun-category sandpit-game))
+       ;; skip intro cutscene
+       (close-specific-task! (game-task intro) (task-status need-resolution)))
       (((speedrun-category full-game))
        ;; skip intro cutscene
        (close-specific-task! (game-task intro) (task-status need-resolution)))
@@ -462,14 +468,14 @@
 
 (defun speedrun-start-full-game-run ()
   ;; start a full game speedrun, save file is already selected so don't default to first slot
-  (start-speedrun (speedrun-category full-game))
+  (start-speedrun (speedrun-category sandpit-game))
   (none))
 
 (defun speedrun-draw-settings ()
   "Draw speedrun related settings in the bottom left corner"
   (when (and (-> *pc-settings* speedrunner-mode?) (not (paused?)) (-> *speedrun-info* should-display?))
     (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf)) (bucket-id subtitle))
-      (draw-string-xy (string-format "Speedrunner Mode ~%Mod Version: ~S ~%Category: ~S ~S~%Run Started: ~S"
+      (draw-string-xy (string-format "Speedrunner Mode ~%Sandpit Version: ~S ~%Category: ~S ~S~%Run Started: ~S"
                                      *mod-version-text*
                                      (enum->string speedrun-category (-> *speedrun-info* category))
                                      (if (-> *pc-settings* skip-movies?) "(CS Skips)" "(No CS Skips)")
